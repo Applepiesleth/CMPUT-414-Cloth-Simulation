@@ -1,0 +1,25 @@
+=============================================
+CMPUT 411 - Assignment 3
+Ronan Sandoval
+1615143
+=============================================
+
+Included Files:
+* assignment3.html
+* assignment3.js - Contains initialization and changeRotation()
+* square.js - Contains square class
+
+NOTES:
+* The constant variable `mode` in assignment3.js allows user to switch between
+  the cube generated up to step 10 (mode = 1) and the cube in step 11 (mode = 2) 
+
+* Change in degrees is determined by change in x mouse position in window.
+  Thus, the box may quickly close when moving the mouse into window as the first
+  change in x is determined for the left side of the window.
+
+* x and y positions passed to the square class are in reference to
+  change from the parent square (or for squares with no parent, the
+  origin)
+
+* Added functionality to change eye x coordinates using left and right
+  arrow keys.
