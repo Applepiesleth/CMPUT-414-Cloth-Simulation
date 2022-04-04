@@ -75,7 +75,7 @@ function main() {
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.clear(gl.DEPTH_BUFFER_BIT);
 
-  cloth = new Cloth(2);
+  cloth = new Cloth(10);
 
   cloth.draw(viewMatrix);
 
@@ -85,7 +85,7 @@ function main() {
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.clear(gl.DEPTH_BUFFER_BIT);
 
-    eye_x += 0.04;
+    eye_x += 0.02;
     viewMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
     viewMatrix.setLookAt(Math.sin(eye_x) * 0.1, 0.05, Math.cos(eye_x) * 0.1, 0, 0, 0, 0, 1, 0);
 
@@ -106,6 +106,5 @@ function changeView(ev, viewMatrix, canvas) {
   // Calculate the view and projection matrix
   viewMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
   viewMatrix.setLookAt(eye_x, -0.1, -0.1, 0, 0, 0, 0, 1, 0);
-  console.log("moving")
   
 }

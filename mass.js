@@ -37,6 +37,8 @@ class Mass {
         this.color[3] = this.c[3];
         this.colorBuffer = initArrayBufferForLaterUse(this.color, 4, gl.FLOAT);
 
+        console.log(this.color)
+
         initAttributeVariable(this.a_Position, this.vertexBuffer);
         initAttributeVariable(this.a_PointSize, this.sizeBuffer);
         initAttributeVariable(this.a_Color, this.colorBuffer);
@@ -47,5 +49,10 @@ class Mass {
         gl.uniformMatrix4fv(this.u_MvpMatrix, false, this.mvpMatrix.elements);
 
         gl.drawArrays(gl.POINTS, 0, 1);
+
+    }
+
+    getDraw() {
+        return [[this.x,this.y,this.z], [this.ps], this.c];
     }
 };
