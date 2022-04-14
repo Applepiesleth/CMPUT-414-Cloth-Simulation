@@ -52,4 +52,8 @@ class Spring {
         gl.drawArrays(gl.LINES, 0, 2);
     }
 
+    getDraw() {
+        return [this.m1.getDraw(), this.m2.getDraw()]
+    }
+
 };

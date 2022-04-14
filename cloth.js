@@ -13,25 +13,27 @@ class Cloth {
             
         }
         
-        for (let i = 0; i < this.masses.length - 1; i++) {
+        for (let i = 0; i < this.pointNum - 1; i++) {
             if (i%size != size - 1) {
                 this.springs.push(new Spring(this.masses[i], this.masses[i + 1]));
             }
         }
-        for (let i = 0; i < this.masses.length - size; i++) {
-
+        for (let i = 0; i < this.pointNum - size; i++) {
             this.springs.push(new Spring(this.masses[i], this.masses[i + size]));
         }
-        for (let i = 0; i < this.masses.length - size - 1; i++) {
+        for (let i = 0; i < this.pointNum - size - 1; i++) {
             if (i%size != size - 1) {
                 this.springs.push(new Spring(this.masses[i], this.masses[i + size + 1]));
             }
         }
-        for (let i = 0; i < this.masses.length - size; i++) {
-            if (i%size != size - 1) {
+        for (let i = 0; i < this.pointNum - size; i++) {
+            if (i%size != size) {
                 this.springs.push(new Spring(this.masses[i], this.masses[i + size - 1]));
             }
         }
+
+        this.springNum = this.springs.length;
+        console.log(this.springNum);
 
         this.a_Position = gl.getAttribLocation(gl.program, "a_Position");
         this.a_Color = gl.getAttribLocation(gl.program, "a_Color");
@@ -39,17 +41,18 @@ class Cloth {
         this.u_MvpMatrix = gl.getUniformLocation(gl.program,"u_MvpMatrix");
     }
 
-    /**
-     * Draws square object onto the canvas
-     */
     draw(viewMatrix) {
+        this.drawMasses(viewMatrix);
+        this.drawSprings(viewMatrix);
+    }
+
+    drawMasses(viewMatrix) {
 
         this.vertices = new Float32Array(this.pointNum * 3);
         this.sizes = new Float32Array(this.pointNum);
         this.colors = new Float32Array(this.pointNum * 4);
 
-        for (let i = 0; i < this.masses.length; i++) {
-            //this.masses[i].draw(viewMatrix);
+        for (let i = 0; i < this.pointNum; i++) {
             var data = this.masses[i].getDraw();
 
             for (let j = 0; j < 3; j++) {
@@ -59,17 +62,10 @@ class Cloth {
             for (let j = 0; j < 4; j++) {
                 this.colors[(i * 4) + j] = data[2][j];
             }
-
-            // this.vertices.push(...data[0]);
-            // this.sizes.push(...data[1]);
-            // this.colors.push(...data[2]);
         }
 
-
         this.vertexBuffer = initArrayBufferForLaterUse(this.vertices, 3, gl.FLOAT);
-
         this.sizeBuffer = initArrayBufferForLaterUse(this.sizes, 1, gl.FLOAT);
-
         this.colorBuffer = initArrayBufferForLaterUse(this.colors, 4, gl.FLOAT);
 
         initAttributeVariable(this.a_Position, this.vertexBuffer);
@@ -82,11 +78,47 @@ class Cloth {
         gl.uniformMatrix4fv(this.u_MvpMatrix, false, this.mvpMatrix.elements);
 
         gl.drawArrays(gl.POINTS, 0, this.pointNum);
+    }
 
-        // for (let i = 0; i < this.masses.length; i++) {
-        //     this.masses[i].draw(viewMatrix);
-        // }
-          
-        
+    drawSprings(viewMatrix) {
+
+        this.vertices = new Float32Array(this.springNum * 2 * 3);
+        this.sizes = new Float32Array(this.springNum * 2);
+        this.colors = new Float32Array(this.springNum * 2 * 4);
+
+        for (let i = 0; i < this.springNum; i++) {
+            var data = this.springs[i].getDraw();
+
+            for (let j = 0; j < 3; j++) {
+                this.vertices[(i * 6) + j] = data[0][0][j];
+            }
+            this.sizes[(i * 2)] = data[0][1][0];
+            for (let j = 0; j < 4; j++) {
+                this.colors[(i * 8) + j] = data[0][2][j];
+            }
+
+            for (let j = 0; j < 3; j++) {
+                this.vertices[(i * 6) + 3 + j] = data[1][0][j];
+            }
+            this.sizes[(i * 2) + 1] = data[1][1][0];
+            for (let j = 0; j < 4; j++) {
+                this.colors[(i * 8) + 4 + j] = data[1][2][j];
+            }
+        }
+
+        this.vertexBuffer = initArrayBufferForLaterUse(this.vertices, 3, gl.FLOAT);
+        this.sizeBuffer = initArrayBufferForLaterUse(this.sizes, 1, gl.FLOAT);
+        this.colorBuffer = initArrayBufferForLaterUse(this.colors, 4, gl.FLOAT);
+
+        initAttributeVariable(this.a_Position, this.vertexBuffer);
+        initAttributeVariable(this.a_PointSize, this.sizeBuffer);
+        initAttributeVariable(this.a_Color, this.colorBuffer);
+
+        this.mvpMatrix = new Matrix4();
+        this.mvpMatrix.set(viewMatrix);
+
+        gl.uniformMatrix4fv(this.u_MvpMatrix, false, this.mvpMatrix.elements);
+
+        gl.drawArrays(gl.LINES, 0, this.springNum * 2);
     }
 }
