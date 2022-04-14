@@ -121,4 +121,11 @@ class Cloth {
 
         gl.drawArrays(gl.LINES, 0, this.springNum * 2);
     }
+
+    simulate(delta) {
+        for (let i = 0; i < this.pointNum; i++) {
+            this.masses[i].resetForces();
+            this.masses[i].simulate(delta);
+        }
+    }
 }

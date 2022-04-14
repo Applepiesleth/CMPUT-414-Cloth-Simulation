@@ -85,13 +85,14 @@ function main() {
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.clear(gl.DEPTH_BUFFER_BIT);
 
-    eye_x += 0.02;
+    // eye_x += 0.02;
     viewMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
     viewMatrix.setLookAt(Math.sin(eye_x) * 0.1, 0.05, Math.cos(eye_x) * 0.1, 0, 0, 0, 0, 1, 0);
 
+    cloth.simulate(0.02);
     cloth.draw(viewMatrix);
     console.log("refresh")
-  }, 80);
+  }, 40);
   
 }
 
