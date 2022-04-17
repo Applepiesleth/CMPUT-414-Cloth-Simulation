@@ -75,12 +75,13 @@ function main() {
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.clear(gl.DEPTH_BUFFER_BIT);
 
-  cloth = new Cloth(10);
+  cloth = new Cloth(15, 1);
 
   cloth.draw(viewMatrix);
 
   document.onkeydown = function(ev){changeView(ev, viewMatrix, canvas); };
 
+  // Every 40ms, physics is performed and image is rendered
   setInterval(function(){ 
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.clear(gl.DEPTH_BUFFER_BIT);
@@ -91,11 +92,13 @@ function main() {
 
     cloth.simulate(0.02);
     cloth.draw(viewMatrix);
-    console.log("refresh")
+    console.log("refresh");
+
   }, 40);
   
 }
 
+// Allows for changing of view using arrow keys
 function changeView(ev, viewMatrix, canvas) {
   switch(ev.keyCode){
     case 39: eye_x += 0.01; break;  // The right arrow key was pressed

@@ -1,18 +1,30 @@
 class Cloth {
 
-    constructor(size) {
+    /**
+     * A mass=spring cloth model
+     * @param {Number} size Number of nodes in the cloth
+     * @param {Number} expanse How large the cloth is on the canvas
+     */
+    constructor(size, expanse) {
         this.size = size;
+        this.expanse = expanse;
         this.pointNum = size * size;
         this.masses = [];
         this.springs = [];
 
+        var width = expanse / 2.0;
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
-                this.masses.push(new Mass(i * 0.1,j * 0.1, 0, 5,[1.0,0.0,0.0,1.0]))
+                // Create stationary masses on top corners
+                if (j == size - 1 && (i == 0 || i == size - 1)) {
+                    this.masses.push(new Mass(i * (width / size) - width/2, j * (width / size) - width/2, 0, 8,[1.0,1.0,0.0,1.0], true))
+                } else {
+                    this.masses.push(new Mass(i * (width / size) - width/2, j * (width / size)  - width/2, 0, 6,[1.0,0.0,0.0,1.0], false))
+                }
             }
-            
         }
         
+        // horizontal and vertical springs
         for (let i = 0; i < this.pointNum - 1; i++) {
             if (i%size != size - 1) {
                 this.springs.push(new Spring(this.masses[i], this.masses[i + 1]));
@@ -21,19 +33,20 @@ class Cloth {
         for (let i = 0; i < this.pointNum - size; i++) {
             this.springs.push(new Spring(this.masses[i], this.masses[i + size]));
         }
+
+        // diagonal springs
         for (let i = 0; i < this.pointNum - size - 1; i++) {
             if (i%size != size - 1) {
                 this.springs.push(new Spring(this.masses[i], this.masses[i + size + 1]));
             }
         }
         for (let i = 0; i < this.pointNum - size; i++) {
-            if (i%size != size) {
+            if (i%size != 0) {
                 this.springs.push(new Spring(this.masses[i], this.masses[i + size - 1]));
             }
         }
 
         this.springNum = this.springs.length;
-        console.log(this.springNum);
 
         this.a_Position = gl.getAttribLocation(gl.program, "a_Position");
         this.a_Color = gl.getAttribLocation(gl.program, "a_Color");
@@ -41,11 +54,13 @@ class Cloth {
         this.u_MvpMatrix = gl.getUniformLocation(gl.program,"u_MvpMatrix");
     }
 
+    /** Draw the masses and springs of this cloth onto canvas */
     draw(viewMatrix) {
         this.drawMasses(viewMatrix);
         this.drawSprings(viewMatrix);
     }
 
+    /** Draws the masses onto canvas as points */
     drawMasses(viewMatrix) {
 
         this.vertices = new Float32Array(this.pointNum * 3);
@@ -80,6 +95,10 @@ class Cloth {
         gl.drawArrays(gl.POINTS, 0, this.pointNum);
     }
 
+    /** 
+     *  Draws the springs onto canvas as lines connecting points 
+     *  @param {Matrix4} viewMatrix Matrix to render cloth in a certain perspective
+     */
     drawSprings(viewMatrix) {
 
         this.vertices = new Float32Array(this.springNum * 2 * 3);
@@ -122,10 +141,17 @@ class Cloth {
         gl.drawArrays(gl.LINES, 0, this.springNum * 2);
     }
 
+    /** 
+     *  Perform physics simulations of masses and springs 
+     *  @param {Number} delta Change in time
+     */
     simulate(delta) {
+
         for (let i = 0; i < this.pointNum; i++) {
             this.masses[i].resetForces();
-            this.masses[i].simulate(delta);
         }
+
+        this.springs.forEach(spring => spring.applyForces());
+        this.masses.forEach(mass => mass.simulate(delta))
     }
 }
