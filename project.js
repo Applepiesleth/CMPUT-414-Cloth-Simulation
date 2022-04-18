@@ -112,3 +112,32 @@ function changeView(ev, viewMatrix, canvas) {
   viewMatrix.setLookAt(eye_x, -0.1, -0.1, 0, 0, 0, 0, 1, 0);
   
 }
+
+// Takes an input image path and returns an array of pixels
+function takeInputImage(imagePath) {
+  // Somewhere needs to add a button perhaps for loading an image
+  
+  // Once the image is loaded, send it to this function to
+  // convert to a 2d array
+  return [[]];
+}
+
+// Takes a 2d array in the form of an image and returns an array of tuples
+// containing the coordinates of the image's vertices
+function checkVertices(image) {
+  // After an image has been loaded, it should
+  // be sent to this function
+
+  // go through the image and any black pixel that
+  // is at the edge of the image or places where
+  // 4 lines intersect. Possibly only 1 pixel wide lines
+  // allowed
+  return [];
+}
+
+// Takes a 3x3 section of the image as input
+// and returns a boolean depending on if there
+// is a vertice in the section or not. 
+function checkCurrentForVertice(imageSection) {
+  return false;
+}
