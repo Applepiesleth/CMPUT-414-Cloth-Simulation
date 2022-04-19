@@ -11,6 +11,10 @@ class Spring {
         /** @type {Mass} */
         this.m2 = m2; 
 
+        this.l0 = Math.sqrt((m1.x-m2.x)*(m1.x-m2.x) + (m1.y-m2.y)*(m1.y-m2.y) + (m1.z-m2.z)*(m1.z-m2.z));
+        this.ks = 1000.0;
+        this.kd = 0.5;
+
         this.a_Position = gl.getAttribLocation(gl.program, "a_Position");
         this.a_Color = gl.getAttribLocation(gl.program, "a_Color");
         this.a_PointSize = gl.getAttribLocation(gl.program, "a_PointSize");
@@ -42,39 +46,39 @@ class Spring {
         var dx = this.m1.x - this.m2.x;
         var dy = this.m1.y - this.m2.y;
         var dz = this.m1.z - this.m2.z;
+        var len = Math.sqrt(dx*dx +dy*dy + dz+dz);
+        if(len == 0){len = 0.0001;}
+        var sd = len-this.l0;//spring rest distance
+
+        var ndx = dx/len; //normalized difference
+        var ndy = dy/len;
+        var ndz = dz/len;
 
         //Calc forces
-        var k = 700;
-        var fkx = -k*dx;
-        var fky = -k*dy;
-        var fkz = -k*dz;
+        //Spring force
+        var fk = this.ks*sd;
 
-        var c = 0.0;
-        var fd1x = c*this.m1.vel[0];
-        var fd1y = c*this.m1.vel[1];
-        var fd1z = c*this.m1.vel[2];
-        var fd2x = c*this.m2.vel[0];
-        var fd2y = c*this.m2.vel[1];
-        var fd2z = c*this.m2.vel[2];
+        //Damping force
+        var dv = [0,0,0];
+        // calc velocity difference
+        for(let i=0;i<3; i++){
+            dv[i] = this.m1.vel[i]-this.m2.vel[i]
+        }
+        var dot = ndx*dv[0] + ndy*dv[1] + ndz*dv[2];
+        
+        var fd = this.kd*dot;
 
 
         //Sum Forces
-        var ft1x = fkx+fd1x;
-        var ft1y = fky+fd1y;
-        var ft1z = fkz+fd1z;
-        var ft2x = -fkx-fd2x;
-        var ft2y = -fky-fd2y;
-        var ft2z = -fkz-fd2z;
+        var ft = fd+fk
 
         //Apply acceleration
-        //this.m1.force = [ft1x,ft1y,ft1z];
-        //this.m2.force = [ft2x,ft2y,ft2z];
-        this.m1.force[0] += ft1x*amt1;
-        this.m1.force[1] += ft1y*amt1;
-        this.m1.force[2] += ft1z*amt1;
-        this.m2.force[0] += ft2x*amt2;
-        this.m2.force[1] += ft2y*amt2;
-        this.m2.force[2] += ft2z*amt2;
+        this.m1.force[0] += -ndx*ft*amt1;
+        this.m1.force[1] += -ndy*ft*amt1;
+        this.m1.force[2] += -ndz*ft*amt1;
+        this.m2.force[0] += ndx*ft*amt2;
+        this.m2.force[1] += ndy*ft*amt2;
+        this.m2.force[2] += ndz*ft*amt2;
 
         
     }
