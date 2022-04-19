@@ -19,7 +19,7 @@ class Mass {
 
         this.vel = [0, 0, 0];
         this.force = [0, 0, 0];
-        this.mass = 1;
+        this.mass = 0.5;
 
         this.a_Position = gl.getAttribLocation(gl.program, "a_Position");
         this.a_Color = gl.getAttribLocation(gl.program, "a_Color");
@@ -35,7 +35,7 @@ class Mass {
 
     /** Reset forces on mass to only gravity */
     resetForces() {
-        this.force = [0, -3, 0];
+        this.force = [0, -1*this.mass, 0];
     }
 
     /** 
