@@ -43,6 +43,9 @@ function main() {
 
   var text = document.getElementById('text');
 
+  var fileReader = document.getElementById('patternUpload');
+  fileReader.addEventListener('change', processImageUpload);
+
   // Get the rendering context for WebGL
   gl = getWebGLContext(canvas);
   if (!gl) {
@@ -113,26 +116,84 @@ function changeView(ev, viewMatrix, canvas) {
   
 }
 
-// Takes an input image path and returns an array of pixels
-function takeInputImage(imagePath) {
-  // Somewhere needs to add a button perhaps for loading an image
-  
-  // Once the image is loaded, send it to this function to
-  // convert to a 2d array
-  return [[]];
+function processImageUpload(ev) {
+  var file = ev.target.files[0];
+
+  var imageCanvas = document.getElementById('imageCanvas');
+  var iCv = imageCanvas.getContext("2d");
+
+  var img = new Image();
+  img.onload = function() {
+    iCv.drawImage(this, 0, 0);
+    var imageArray = takeInputImage(iCv.getImageData(0, 0, img.width, img.height));
+    var vertices = checkVertices(imageArray);
+  }
+  img.onerror = function() {
+    console.log('the heck');
+  }
+  img.src = URL.createObjectURL(file);
 }
 
-// Takes a 2d array in the form of an image and returns an array of tuples
+// Takes an input image canvas and returns an array of black and white pixels
+function takeInputImage(inputImage) {
+  var w = inputImage.width;
+  var h = inputImage.height;
+  var img = inputImage.data;
+
+  var finalArray = new Array(h);
+  var j = -1;
+  for (var i = 0; i < h; i++) {
+    finalArray[i] = new Array(w);
+    for (var j = 0; j < w; j++) {
+      var idx = (i*w*4 + j*4);
+      var r = img[idx];
+      var g = img[idx+1];
+      var b = img[idx+2];
+      // use https://en.wikipedia.org/wiki/Grayscale to convert to grayscale
+      var avg = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+      var val = 1;
+      if (avg < 0.5)  val = 0;
+      finalArray[i][j] = val;
+    }
+  }
+  return finalArray;
+}
+
+// Takes a 2d array in the form of a grayscale image and returns an array of tuples
 // containing the coordinates of the image's vertices
 function checkVertices(image) {
-  // After an image has been loaded, it should
-  // be sent to this function
-
   // go through the image and any black pixel that
   // is at the edge of the image or places where
   // 4 lines intersect. Possibly only 1 pixel wide lines
   // allowed
-  return [];
+  var h = image.length;
+  if (h == 0) {
+    console.error('Invalid image.');
+    return;
+  }
+  var w = image[0].length;
+  if (w == 0) {
+    console.error('Invalid image.');
+    return;
+  }
+  var vertices = [];
+  for (var i = 0; i < h; i++) {
+    for (var j = 0; j < w; j++) {
+      var p = image[i][j];
+      if (!p) {
+        if (i == 0 || j == 0 || i == h || j == w) {
+          if (checkVerticesArray(vertices, i, j)) vertices.push([i, j]);
+        } else {
+          // section array to 3x3 section
+          var isVertice = checkCurrentForVertice();
+          if (isVertice) {
+            if (checkVerticesArray(vertices, i, j)) vertices.push([i, j]);
+          }
+        }
+      }
+    }
+  }
+  return vertices;
 }
 
 // Takes a 3x3 section of the image as input
@@ -140,4 +201,20 @@ function checkVertices(image) {
 // is a vertice in the section or not. 
 function checkCurrentForVertice(imageSection) {
   return false;
+}
+
+function checkVerticesArray(vertices, i, j) {
+  var verticeExists = false;
+  for (var v in vertices) {
+    if (checkDistance(i, j, v[0], v[1])) {
+      verticeExists = true;
+      break;
+    }
+  }
+  return verticeExists;
+}
+
+function checkDistance(x1, y1, x2, y2) {
+  var dist = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+  return dist <= Math.sqrt(2);
 }
