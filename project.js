@@ -126,11 +126,11 @@ function main() {
     viewMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
     viewMatrix.setLookAt(Math.sin(eye_x) * 0.1, 0.05, Math.cos(eye_x) * 0.1, 0, 0, 0, 0, 1, 0);
 
-    cloth.simulate(0.02);
+    cloth.simulate(0.01);
     cloth.draw(viewMatrix);
     //console.log("refresh");
 
-  }, 40);
+  }, 10);
   
 }
 
@@ -139,6 +139,8 @@ function changeView(ev, viewMatrix, canvas) {
   switch(ev.keyCode){
     case 39: eye_x += 0.04; break;  // The right arrow key was pressed
     case 37: eye_x -= 0.04; break;  // The left arrow key was pressed
+    case 87: cloth.stretch(0,0.20,0,0.01); break; // W key pressed
+    case 83: cloth.stretch(0,0.20,0,-0.01); break; // S key pressed
   }
 
   viewMatrix = new Matrix4(); // The view matrix

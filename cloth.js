@@ -154,4 +154,22 @@ class Cloth {
         this.springs.forEach(spring => spring.applyForces());
         this.masses.forEach(mass => mass.simulate(delta))
     }
+
+    /*
+    Stretches the cloth from the given center point (cx,cy,cz)
+    */
+    stretch(cx,cy,cz,amount) {
+        this.masses.forEach(mass => this.stretchOne(mass,cx,cy,cz,amount));
+    }
+
+    stretchOne(mass,cx,cy,cz,amount){
+        var dx = mass.x - cx;
+        var dy = mass.y - cy;
+        var dz = mass.z - cz;
+        var len = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+        mass.x = mass.x + dx*amount;
+        mass.y = mass.y + dy*amount;
+        mass.z = mass.z + dz*amount;
+    }
 }

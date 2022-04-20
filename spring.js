@@ -12,8 +12,8 @@ class Spring {
         this.m2 = m2; 
 
         this.l0 = Math.sqrt((m1.x-m2.x)*(m1.x-m2.x) + (m1.y-m2.y)*(m1.y-m2.y) + (m1.z-m2.z)*(m1.z-m2.z));
-        this.ks = 1000.0;
-        this.kd = 0.7;
+        this.ks = 3000.0;
+        this.kd = 7.5;
 
         this.a_Position = gl.getAttribLocation(gl.program, "a_Position");
         this.a_Color = gl.getAttribLocation(gl.program, "a_Color");
