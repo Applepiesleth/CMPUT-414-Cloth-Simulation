@@ -13,7 +13,7 @@ class Spring {
 
         this.l0 = Math.sqrt((m1.x-m2.x)*(m1.x-m2.x) + (m1.y-m2.y)*(m1.y-m2.y) + (m1.z-m2.z)*(m1.z-m2.z));
         this.ks = 1000.0;
-        this.kd = 0.5;
+        this.kd = 0.7;
 
         this.a_Position = gl.getAttribLocation(gl.program, "a_Position");
         this.a_Color = gl.getAttribLocation(gl.program, "a_Color");
@@ -30,7 +30,7 @@ class Spring {
     /** Apply spring forces on connected masses */
     applyForces() {
         //TODO
-        //Check for stationary
+        //Check for stationary, determines distribution of force to each endpoint
         var amt1 = 0.5;
         var amt2 = 0.5;
         if(this.m1.stationary){
@@ -66,13 +66,13 @@ class Spring {
         }
         var dot = ndx*dv[0] + ndy*dv[1] + ndz*dv[2];
         
-        var fd = this.kd*dot;
+        var fd = this.kd*dot;//final damping force
 
 
         //Sum Forces
         var ft = fd+fk
 
-        //Apply acceleration
+        //Apply acceleration to masses
         this.m1.force[0] += -ndx*ft*amt1;
         this.m1.force[1] += -ndy*ft*amt1;
         this.m1.force[2] += -ndz*ft*amt1;
@@ -80,7 +80,9 @@ class Spring {
         this.m2.force[1] += ndy*ft*amt2;
         this.m2.force[2] += ndz*ft*amt2;
 
-        
+        if (ft>1000){
+            //mark tearing
+        }
     }
 
 };

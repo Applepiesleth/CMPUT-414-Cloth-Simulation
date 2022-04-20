@@ -84,6 +84,39 @@ function main() {
 
   document.onkeydown = function(ev){changeView(ev, viewMatrix, canvas); };
 
+  var dragStart = false;
+  function onMouseEvent(ev){
+    var rect = canvas.getBoundingClientRect();
+    var x = ev.clientX-canvas.offsetLeft;
+    var y = ev.clientY-canvas.offsetTop;
+
+    var glx = x/rect.width *2 - 1;
+    var gly = x/rect.width *-2 - 1;
+
+    //console.log(ev.type);
+    if(ev.type == 'mousemove' && dragStart){
+      //drag
+      console.log("drag");
+    }
+    else if (ev.type == 'mouseup' && dragStart){
+      //release
+      console.log("release");
+      dragStart = false;
+    }
+    else if (ev.type == 'mousedown'){
+      //click
+      console.log("click");
+      console.log("mouse=",x,",",y);
+      dragStart = true;
+
+
+    }
+  }
+
+  canvas.addEventListener('mousedown', onMouseEvent, false);
+  canvas.addEventListener('mousemove', onMouseEvent, false);
+  canvas.addEventListener('mouseup', onMouseEvent, false);
+
   // Every 40ms, physics is performed and image is rendered
   setInterval(function(){ 
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -95,7 +128,7 @@ function main() {
 
     cloth.simulate(0.02);
     cloth.draw(viewMatrix);
-    console.log("refresh");
+    //console.log("refresh");
 
   }, 40);
   
@@ -104,8 +137,8 @@ function main() {
 // Allows for changing of view using arrow keys
 function changeView(ev, viewMatrix, canvas) {
   switch(ev.keyCode){
-    case 39: eye_x += 0.01; break;  // The right arrow key was pressed
-    case 37: eye_x -= 0.01; break;  // The left arrow key was pressed
+    case 39: eye_x += 0.04; break;  // The right arrow key was pressed
+    case 37: eye_x -= 0.04; break;  // The left arrow key was pressed
   }
 
   viewMatrix = new Matrix4(); // The view matrix
