@@ -70,7 +70,7 @@ class Spring {
 
 
         //Sum Forces
-        var ft = fd+fk
+        var ft = Math.max(fd+fk,0.0);
 
         //Apply acceleration to masses
         this.m1.force[0] += -ndx*ft*amt1;
