@@ -77,6 +77,8 @@ function main() {
 
   cloth.draw(viewMatrix);
 
+  document.onkeydown = function(ev){changeView(ev, viewMatrix, canvas); };
+
   var dragStart = false;
   function onMouseEvent(ev){
     var rect = canvas.getBoundingClientRect();
@@ -135,12 +137,6 @@ function changeView(ev, viewMatrix, canvas) {
     case 87: cloth.stretch(0,0.20,0,0.01); break; // W key pressed
     case 83: cloth.stretch(0,0.20,0,-0.01); break; // S key pressed
   }
-
-  viewMatrix = new Matrix4(); // The view matrix
-
-  // Calculate the view and projection matrix
-  viewMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
-  viewMatrix.setLookAt(eye_x, -0.1, -0.1, 0, 0, 0, 0, 1, 0);
   
 }
 
