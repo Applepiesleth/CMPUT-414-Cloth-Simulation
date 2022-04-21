@@ -238,26 +238,65 @@ function checkVertices(image) {
     console.error('Invalid image.');
     return;
   }
-  // Initialize the vertice array and then loop through the entire image's coordinates.
-  var vertices = [];
+  // Some entered images will not have a 1 pixel size line size, 
+  // so this goes through the first section of black pixels it finds
+  // and chooses the 'pixel size' or 'line size' of the image based on that. 
+  var line_size = 1;
+  var size_found = false;
+  // Loops through the image until the first black pixel is found
   for (var i = 0; i < h; i++) {
     for (var j = 0; j < w; j++) {
+      if (image[i][j] == 0) {
+        // Check down and right of the pixel for more black pixels. 
+        var height_count = 0;
+        for (var k = i; k < h; k++) {
+          if (image[k][j] != 0) break;
+          height_count++;
+        }
+        var width_count = 0;
+        for (var k = j; k < w; k++) {
+          if (image[i][k] != 0) break;
+          width_count++;
+        }
+        // Once the number of black pixels around this one has been found,
+        // it picks the line size based on that value - it picks the smaller
+        // of the width or height as some black pixels could be in a line. 
+        // This means that each 'pixel' of the image is considered 
+        // line_size x line_size
+        line_size = Math.min(height_count, width_count);
+        size_found= true;
+        break;
+      }
+      if (size_found) break;
+    }
+    if (size_found) break;
+  }
+  console.log(line_size);
+  // Initialize the vertice array and then loop through the entire image's coordinates.
+  var vertices = [];
+  // It jumps each step by line_size due to the fact that the line_size is considered
+  // the size of each 'pixel'
+  for (var i = 0; i < h; i += line_size) {
+    for (var j = 0; j < w; j += line_size) {
       var p = image[i][j];
       // If a point is black, we should check if there are any black neighbours. 
       if (p == 0) {
         // If a point is at the edge of the image, we want to include it as
         // a vertice without needing to check for neighbours. 
-        if (i == 0 || j == 0 || i == (h-1) || j == (w-1)) {
+        // The edge of the image is considered within one 'line_size' of the
+        // actual edge (0 and height-1 or width-1)
+        if (i <= (line_size - 1) || j <= (line_size - 1) ||
+            i >= (h-line_size) || j >= (w-line_size)) {
           // Check if a vertice already exists that is a neighbour of this one. 
           // If not, push it to the vertices array as a new vertice. 
-          if (!checkVerticesArray(vertices, i, j)) vertices.push([i, j]);
+          if (!checkVerticesArray(vertices, i, j, line_size)) vertices.push([i, j]);
         } else {
           // Check if a point is a vertice by checking for the neighbours. 
-          var isVertice = checkCurrentForVertice(image, i, j);
+          var isVertice = checkCurrentForVertice(image, i, j, line_size);
           if (isVertice) {
             // Check if a vertice already exists that is a neighbour of this one. 
             // If not, push it to the vertices array as a new vertice. 
-            if (!checkVerticesArray(vertices, i, j)) vertices.push([i, j]);
+            if (!checkVerticesArray(vertices, i, j, line_size)) vertices.push([i, j]);
           }
         }
       }
@@ -269,38 +308,40 @@ function checkVertices(image) {
 // Takes the image and coordinates as input 
 // and returns a boolean depending on if there
 // is a vertice at those coordinates or not. 
-// A vertice is defined as at least 4 black pixel neighbours
-function checkCurrentForVertice(image, x, y) {
+// A vertice is defined as at least 4 * line_size neighbours in black,
+function checkCurrentForVertice(image, x, y, line_size) {
   var count = 0;
   // If the coordinates is not a black pixel, we do not want to check it. 
   if (image[x][y] != 0) return false;
-  // Loop through the neighbours of the pixel (in a 3x3 section)
+  // Loop through the neighbours of the pixel (in a (line_size+2) by (line_size+2) section)
   // and count the number of black neighbours. If there are
-  // 4 black neighbours plus the pixel itself, then there is a vertice. 
-  for (i = x - 1; i <= x + 1; i++) {
-    for (j = y - 1; j <= y + 1; j++) {
+  // 4 * line_size black neighbours plus the pixel (of line_size) itself,
+  // then there is a vertice. 
+  var num_neighbours = 5 * line_size;
+  for (i = x - line_size; i <= x + line_size; i++) {
+    for (j = y - line_size; j <= y + line_size; j++) {
       if (image[i][j] == 0) {
         count ++;
       }
-      if (count >= 5) break;
+      if (count >= num_neighbours) break;
     }
-    if (count >= 5) break;
+    if (count >= num_neighbours) break;
   }
-  if (count >= 5) return true;
+  if (count >= num_neighbours) return true;
   else return false;
 }
 
 // Loop through the current vertice array and check if any 
 // vertices in it are neighbours of the current coordinates. 
-function checkVerticesArray(vertices, i, j) {
+function checkVerticesArray(vertices, i, j, line_size) {
   var verticeExists = false;
   for (vi = 0; vi < vertices.length; vi++) {
     var v = vertices[vi];
     // Check the distance from the vertice to the given coordinates.
-    // If it is less than sqrt(2), or one diagonal step, then the 
+    // If it is less than 2 * line size * sqrt(2), or two diagonal steps, then the 
     // coordinates are a neighbour of an existing vertice and should
     // not be used. 
-    if (checkDistance(i, j, v[0], v[1])) {
+    if (checkDistance(i, j, v[0], v[1], line_size)) {
       verticeExists = true;
       break;
     }
@@ -309,9 +350,9 @@ function checkVerticesArray(vertices, i, j) {
 }
 
 // Check the distance between the given coordinates. If the
-// distance is less than or equal to sqrt(2), which is one diagonal step, 
-// then return true. 
-function checkDistance(x1, y1, x2, y2) {
+// distance is less than or equal to 2 * the line size * sqrt(2),
+// which is two diagonal steps, then return true. Otherwise it returns false.  
+function checkDistance(x1, y1, x2, y2, line_size) {
   var dist = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-  return dist <= Math.sqrt(2);
+  return dist <= (line_size * 2 * Math.sqrt(2));
 }
