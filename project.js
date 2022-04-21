@@ -365,3 +365,11 @@ function checkDistance(x1, y1, x2, y2, line_size) {
   var dist = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   return dist <= (line_size * 2 * Math.sqrt(2));
 }
+
+// Set size and expanse of cloth from webpage input
+function setCloth() {
+  var size = document.getElementById("size").value;
+  var expanse = Number(document.getElementById("nodes").value);
+
+  cloth = new Cloth(expanse, size);
+}
