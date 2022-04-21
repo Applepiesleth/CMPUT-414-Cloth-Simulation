@@ -55,13 +55,13 @@ class Cloth {
     }
 
     /** Draw the masses and springs of this cloth onto canvas */
-    draw(viewMatrix) {
-        this.drawMasses(viewMatrix);
-        this.drawSprings(viewMatrix);
+    draw() {
+        this.drawMasses();
+        this.drawSprings();
     }
 
     /** Draws the masses onto canvas as points */
-    drawMasses(viewMatrix) {
+    drawMasses() {
 
         this.vertices = new Float32Array(this.pointNum * 3);
         this.sizes = new Float32Array(this.pointNum);
@@ -87,11 +87,6 @@ class Cloth {
         initAttributeVariable(this.a_PointSize, this.sizeBuffer);
         initAttributeVariable(this.a_Color, this.colorBuffer);
 
-        this.mvpMatrix = new Matrix4();
-        this.mvpMatrix.set(viewMatrix);
-
-        gl.uniformMatrix4fv(this.u_MvpMatrix, false, this.mvpMatrix.elements);
-
         gl.drawArrays(gl.POINTS, 0, this.pointNum);
     }
 
@@ -99,7 +94,7 @@ class Cloth {
      *  Draws the springs onto canvas as lines connecting points 
      *  @param {Matrix4} viewMatrix Matrix to render cloth in a certain perspective
      */
-    drawSprings(viewMatrix) {
+    drawSprings() {
 
         this.vertices = new Float32Array(this.springNum * 2 * 3);
         this.sizes = new Float32Array(this.springNum * 2);
@@ -132,11 +127,6 @@ class Cloth {
         initAttributeVariable(this.a_Position, this.vertexBuffer);
         initAttributeVariable(this.a_PointSize, this.sizeBuffer);
         initAttributeVariable(this.a_Color, this.colorBuffer);
-
-        this.mvpMatrix = new Matrix4();
-        this.mvpMatrix.set(viewMatrix);
-
-        gl.uniformMatrix4fv(this.u_MvpMatrix, false, this.mvpMatrix.elements);
 
         gl.drawArrays(gl.LINES, 0, this.springNum * 2);
     }
@@ -171,5 +161,42 @@ class Cloth {
         mass.x = mass.x + dx*amount;
         mass.y = mass.y + dy*amount;
         mass.z = mass.z + dz*amount;
+    }
+
+    loadPoints(vertices, width) {
+        this.size = Math.floor(Math.sqrt(vertices.length));
+        this.pointNum = this.size * this.size;
+        
+        this.masses = [];
+        this.springs = [];
+        
+        
+        var ratio = 1.0 * this.expanse / width / 2;
+        var k = 0;
+        for (let i = 0; i < this.size; i++) {
+            for (let j = 0; j < this.size; j++) {
+                // Create stationary masses on top corners
+                if (i == this.size - 1 && (j == 0 || j == this.size - 1)) {
+                    this.masses.push(new Mass(vertices[k][1] * ratio - (this.expanse / 4), vertices[k][0] * ratio - (this.expanse / 4), 0, 8, [1.0,1.0,0.0,1.0], true))
+                } else {
+                    this.masses.push(new Mass(vertices[k][1] * ratio - (this.expanse / 4), vertices[k][0] * ratio - (this.expanse / 4), 0, 6,[1.0,0.0,0.0,1.0], false))
+                }
+                k = k + 1;
+            }
+        }
+        
+        console.log(this.masses);
+
+        // horizontal and vertical springs
+        for (let i = 0; i < this.pointNum - 1; i++) {
+            if (i%this.size != this.size - 1) {
+                this.springs.push(new Spring(this.masses[i], this.masses[i + 1]));
+            }
+        }
+        for (let i = 0; i < this.pointNum - this.size; i++) {
+            this.springs.push(new Spring(this.masses[i], this.masses[i + this.size]));
+        }
+
+        this.springNum = this.springs.length;
     }
 }

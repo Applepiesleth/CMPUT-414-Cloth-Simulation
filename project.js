@@ -2,11 +2,10 @@
 var VSHADER_SOURCE = `
   attribute vec4 a_Position; // attribute variable
   attribute vec4 a_Color;
-  uniform mat4 u_MvpMatrix;
   attribute float a_PointSize;
   varying vec4 color;
   void main () {
-    gl_Position = u_MvpMatrix*a_Position;
+    gl_Position = a_Position;
     gl_PointSize = a_PointSize;
     color = a_Color;
   }
@@ -59,10 +58,6 @@ function main() {
   // Get the storage locations of u_ViewMatrix and u_ProjMatrix
   let u_MvpMatrix = gl.getUniformLocation(gl.program,"u_MvpMatrix");
   let viewMatrix = new Matrix4(); // The view matrix
-
-  // Calculate the view and projection matrix
-  viewMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
-  viewMatrix.setLookAt(-0.1, -0.1, -0.1, 0, 0, 0, 0, 1, 0);
   
   gl.uniformMatrix4fv(u_MvpMatrix, false, viewMatrix.elements);
 
@@ -81,8 +76,6 @@ function main() {
   fileReader.addEventListener('change', processImageUpload);
 
   cloth.draw(viewMatrix);
-
-  document.onkeydown = function(ev){changeView(ev, viewMatrix, canvas); };
 
   var dragStart = false;
   function onMouseEvent(ev){
@@ -127,7 +120,7 @@ function main() {
     viewMatrix.setLookAt(Math.sin(eye_x) * 0.1, 0.05, Math.cos(eye_x) * 0.1, 0, 0, 0, 0, 1, 0);
 
     cloth.simulate(0.01);
-    cloth.draw(viewMatrix);
+    cloth.draw();
     //console.log("refresh");
 
   }, 10);
@@ -153,9 +146,10 @@ function changeView(ev, viewMatrix, canvas) {
 
 // Once an image has been uploaded, move the masses of the current cloth
 // to correspond to the weave's vertice locations. 
-function updateClothCoordinates(vertices) {
+function updateClothCoordinates(vertices, width) {
   console.log(vertices);
   // update cloth in here
+  cloth.loadPoints(vertices, width);
 }
 
 // onChange function that triggers when an image is uploaded. This function displays
@@ -186,7 +180,7 @@ function processImageUpload(ev) {
     // Note: only works with 1px wide weave patterns.
     var vertices = checkVertices(imageArray);
     // Updates the cloth with the retrieved vertices. 
-    updateClothCoordinates(vertices);
+    updateClothCoordinates(vertices, img.width);
   }
   img.onerror = function() {
     console.log('Error loading image.');
