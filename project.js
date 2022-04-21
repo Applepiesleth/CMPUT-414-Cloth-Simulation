@@ -32,6 +32,9 @@ const yellow = [1.0, 1.0, 0.0, 1.0]
 var eye_x = -0.1; // current eye x
 var eye_z = -0.1;
 var prev_x = 0; // For detecting change of mouse x.
+var prev_y = 0;
+var prev_glx = 0; // For detecting change of mouse x in gl space.
+var prev_gly = 0;
 
 var cloth;
 
@@ -91,21 +94,27 @@ function main() {
     //console.log(ev.type);
     if(ev.type == 'mousemove' && dragStart){
       //drag
-      console.log("drag");
+      //console.log("drag");
+      //console.log("mouse=",glx,",",gly);
+      cloth.tearLine(glx,gly,prev_glx,prev_gly);
     }
     else if (ev.type == 'mouseup' && dragStart){
       //release
-      console.log("release");
+      //console.log("release");
       dragStart = false;
     }
     else if (ev.type == 'mousedown'){
       //click
-      console.log("click");
-      console.log("mouse=",x,",",y);
+      //console.log("click");
       dragStart = true;
 
-
     }
+
+    //keep track of prev vals at end
+    prev_x = x;
+    prev_y = y;
+    prev_glx = glx;
+    prev_gly = gly;
   }
 
   canvas.addEventListener('mousedown', onMouseEvent, false);

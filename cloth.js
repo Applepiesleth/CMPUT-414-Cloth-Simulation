@@ -163,6 +163,14 @@ class Cloth {
         mass.z = mass.z + dz*amount;
     }
 
+    /*Tears along the given line t1 to t2*/
+    tearLine(t1x,t1y,t2x,t2y){
+        //console.log("try tear");
+        this.springs.forEach(spring => spring.checkTearLine(t1x,t1y,t2x,t2y));
+    }
+
+
+
     loadPoints(vertices, width) {
         this.size = Math.floor(Math.sqrt(vertices.length));
         this.pointNum = this.size * this.size;
