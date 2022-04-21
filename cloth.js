@@ -175,26 +175,45 @@ class Cloth {
         var k = 0;
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++) {
-                // Create stationary masses on top corners
-                if (i == this.size - 1 && (j == 0 || j == this.size - 1)) {
-                    this.masses.push(new Mass(vertices[k][1] * ratio - (this.expanse / 4), vertices[k][0] * ratio - (this.expanse / 4), 0, 8, [1.0,1.0,0.0,1.0], true))
-                } else {
-                    this.masses.push(new Mass(vertices[k][1] * ratio - (this.expanse / 4), vertices[k][0] * ratio - (this.expanse / 4), 0, 6,[1.0,0.0,0.0,1.0], false))
-                }
+                this.masses.push(new Mass(vertices[k][1] * ratio - (this.expanse / 4), vertices[k][0] * ratio - (this.expanse / 4), 0, 6,[1.0,0.0,0.0,1.0], false))
                 k = k + 1;
             }
         }
         
-        console.log(this.masses);
-
-        // horizontal and vertical springs
-        for (let i = 0; i < this.pointNum - 1; i++) {
-            if (i%this.size != this.size - 1) {
-                this.springs.push(new Spring(this.masses[i], this.masses[i + 1]));
+        // Determine Stationary points
+        var topLeft = 0
+        var topRight = 0
+        for (let i = 0; i < this.pointNum; i++) { 
+            if (Math.pow(this.masses[i].x * -1, 3) + Math.pow(this.masses[i].y, 3) > Math.pow(this.masses[topLeft].x * -1, 3) + Math.pow(this.masses[topLeft].y, 3)) {
+                topLeft = i;
+            }
+            if (Math.pow(this.masses[i].x, 3) + Math.pow(this.masses[i].y, 3) > Math.pow(this.masses[topRight].x, 3) + Math.pow(this.masses[topRight].y, 3)) {
+                topRight = i;
             }
         }
-        for (let i = 0; i < this.pointNum - this.size; i++) {
-            this.springs.push(new Spring(this.masses[i], this.masses[i + this.size]));
+        this.masses[topLeft].stationary = true;
+        this.masses[topLeft].c = [1.0,1.0,0.0,1.0];
+        this.masses[topRight].stationary = true;
+        this.masses[topRight].c = [1.0,1.0,0.0,1.0];
+
+        // Connect masses to nearby points
+        for (let i = 0; i < this.pointNum; i++) {
+            while(this.masses[i].connections.length < 4) {
+                var closest = 0;
+                var lowestDist = Number.MAX_VALUE;
+                for (let j = 0; j < this.pointNum; j++) {
+                    if (j != i && !this.masses[j].connections.includes(i)) {
+                        var dist = Math.pow(this.masses[i].x - this.masses[j].x, 2) + Math.pow(this.masses[i].y - this.masses[j].y, 2); 
+                        if (dist < lowestDist) {
+                            lowestDist = dist;
+                            closest = j; 
+                        }
+                    } 
+                }
+                this.springs.push(new Spring(this.masses[i], this.masses[closest]));
+                this.masses[i].connections.push(closest);
+                this.masses[closest].connections.push(i);
+            }
         }
 
         this.springNum = this.springs.length;

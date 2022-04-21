@@ -21,6 +21,8 @@ class Mass {
         this.force = [0, 0, 0];
         this.mass = 0.5;
 
+        this.connections = [];
+
         this.a_Position = gl.getAttribLocation(gl.program, "a_Position");
         this.a_Color = gl.getAttribLocation(gl.program, "a_Color");
         this.a_PointSize = gl.getAttribLocation(gl.program, "a_PointSize");
