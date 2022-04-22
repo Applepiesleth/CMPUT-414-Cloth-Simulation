@@ -70,7 +70,7 @@ class Spring {
 
 
         //Sum Forces
-        var ft = fd +Math.max(fk, 0.0);
+        var ft = Math.max(fd +fk, 0.0);
 
         //Apply acceleration to masses
         this.m1.force[0] += -ndx * ft * amt1;
@@ -80,15 +80,16 @@ class Spring {
         this.m2.force[1] += ndy * ft * amt2;
         this.m2.force[2] += ndz * ft * amt2;
 
-        if (ft > 200) {
-            this.ks = Math.min(this.ks+4,5000);
+        /*if (ft > 200) {
+            //Increase stiffness when we have higher tension
+            this.ks = Math.min(this.ks+30,3000);
             //mark tearing
             //console.log("stretch tear");
             //cloth.removeSpring(this);
         }
         else{
-            this.ks = Math.max(this.ks-2,2000);
-        }
+            this.ks = Math.max(this.ks-20,3000);
+        }*/
     }
 
     /*Helper cross product*/
