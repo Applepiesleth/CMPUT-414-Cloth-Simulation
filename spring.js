@@ -130,7 +130,7 @@ class Spring {
         var t = this.cross(t1x - this.m1.x, t1y - this.m1.y, sx, sy) / denom;
 
         if ((t >= 0) && (t <= 1) && (u >= 0) && (u <= 1)) {
-            console.log("should tear");
+            this.m2 = this.m1;
         }
     }
 

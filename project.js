@@ -29,10 +29,10 @@ const blue = [0.0, 0.0, 1.0, 1.0];
 const cyan = [0.0, 1.0, 1.0, 1.0];
 const yellow = [1.0, 1.0, 0.0, 1.0]
 
-var eye_x = -0.1; // current eye x
-var eye_z = -0.1;
 var prev_x = 0; // For detecting change of mouse x.
 var prev_y = 0;
+var glx;
+var gly;
 var prev_glx = 0; // For detecting change of mouse x in gl space.
 var prev_gly = 0;
 var cutx1 = 0;//start point of cut
@@ -44,8 +44,6 @@ var gl;
 function main() {
   // Retrieve <canvas> element
   var canvas = document.getElementById('webgl');
-
-  var text = document.getElementById('text');
 
   // Get the rendering context for WebGL
   gl = getWebGLContext(canvas);
@@ -59,12 +57,6 @@ function main() {
     console.log('Failed to intialize shaders.');
     return;
   }
-
-  // Get the storage locations of u_ViewMatrix and u_ProjMatrix
-  let u_MvpMatrix = gl.getUniformLocation(gl.program,"u_MvpMatrix");
-  let viewMatrix = new Matrix4(); // The view matrix
-  
-  gl.uniformMatrix4fv(u_MvpMatrix, false, viewMatrix.elements);
 
   // Specify the color for clearing <canvas>
   gl.clearColor(0.05, 0.06, 0.07, 1.0);
@@ -80,62 +72,64 @@ function main() {
   var fileReader = document.getElementById('patternUpload');
   fileReader.addEventListener('change', processImageUpload);
 
-  cloth.draw(viewMatrix);
+  cloth.draw();
 
   document.onkeydown = function(ev){changeView(ev, viewMatrix, canvas); };
 
   var dragStart = false;
   function onMouseEvent(ev){
     var rect = canvas.getBoundingClientRect();
-    var x = ev.clientX-canvas.offsetLeft;
-    var y = ev.clientY-canvas.offsetTop;
+    var x = ev.clientX - rect.left;
+    var y = ev.clientY - rect.top;
 
-    var glx = x/rect.width *2 - 1;
-    var gly = x/rect.width *-2 - 1;
+    glx = x/gl.canvas.width *2 - 1;
+    gly = y/gl.canvas.height *-2 + 1;
 
-    //console.log(ev.type);
-    if(ev.type == 'mousemove' && dragStart){
-      //drag
-      //console.log("drag");
-      //console.log("mouse=",glx,",",gly);
-      cloth.tearLine(glx,gly,prev_glx,prev_gly);
-    }
-    else if (ev.type == 'mouseup' && dragStart){
+    if (ev.type == 'mouseup' && dragStart){
       //release
-      //console.log("release");
       dragStart = false;
+      cloth.tearLine(cutx1,cuty1,glx,gly);
     }
     else if (ev.type == 'mousedown'){
       //click
-      //console.log("click");
       dragStart = true;
       cutx1 = glx;
       cuty1 = gly;
     }
-
-    //keep track of prev vals at end
-    prev_x = x;
-    prev_y = y;
-    prev_glx = glx;
-    prev_gly = gly;
   }
 
   canvas.addEventListener('mousedown', onMouseEvent, false);
   canvas.addEventListener('mousemove', onMouseEvent, false);
   canvas.addEventListener('mouseup', onMouseEvent, false);
 
+  var a_Position = gl.getAttribLocation(gl.program, "a_Position");
+  var a_Color = gl.getAttribLocation(gl.program, "a_Color");
+  var a_PointSize = gl.getAttribLocation(gl.program, "a_PointSize");
+
   // Every 40ms, physics is performed and image is rendered
   setInterval(function(){ 
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.clear(gl.DEPTH_BUFFER_BIT);
 
-    // eye_x += 0.02;
-    viewMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
-    viewMatrix.setLookAt(Math.sin(eye_x) * 0.1, 0.05, Math.cos(eye_x) * 0.1, 0, 0, 0, 0, 1, 0);
-
     cloth.simulate(0.01);
     cloth.draw();
     //console.log("refresh");
+
+    if(dragStart) {
+      var vertices = new Float32Array([cutx1, cuty1, 0, glx, gly, 0]);
+      var sizes = new Float32Array([1.0,1.0]);
+      var colors = new Float32Array([0.0,1.0,1.0,1.0,0.0,1.0,1.0,1.0]);
+
+      var vertexBuffer = initArrayBufferForLaterUse(vertices, 3, gl.FLOAT);
+      var sizeBuffer = initArrayBufferForLaterUse(sizes, 1, gl.FLOAT);
+      var colorBuffer = initArrayBufferForLaterUse(colors, 4, gl.FLOAT);
+
+      initAttributeVariable(a_Position, vertexBuffer);
+      initAttributeVariable(a_PointSize, sizeBuffer);
+      initAttributeVariable(a_Color, colorBuffer);
+
+      gl.drawArrays(gl.LINES, 0, 2);
+    }
 
   }, 10);
   
@@ -144,8 +138,6 @@ function main() {
 // Allows for changing of view using arrow keys
 function changeView(ev, viewMatrix, canvas) {
   switch(ev.keyCode){
-    case 39: eye_x += 0.04; break;  // The right arrow key was pressed
-    case 37: eye_x -= 0.04; break;  // The left arrow key was pressed
     case 87: cloth.stretch(0,0.20*cloth.expanse,0,0.01); break; // W key pressed
     case 83: cloth.stretch(0,0.20*cloth.expanse,0,-0.01); break; // S key pressed
   }
