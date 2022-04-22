@@ -17,9 +17,9 @@ class Cloth {
             for (let j = 0; j < size; j++) {
                 // Create stationary masses on top corners
                 if (j == size - 1 && (i == 0 || i == size - 1)) {
-                    this.masses.push(new Mass(i * (width / size) - width/2, j * (width / size) - width/2, 0, 8,[1.0,1.0,0.0,1.0], true))
+                    this.masses.push(new Mass(i * (width / (size-1)) - width/2, j * (width / (size-1)) - width/2, 0, 8,[1.0,1.0,0.0,1.0], true))
                 } else {
-                    this.masses.push(new Mass(i * (width / size) - width/2, j * (width / size)  - width/2, 0, 6,[1.0,0.0,0.0,1.0], false))
+                    this.masses.push(new Mass(i * (width / (size-1)) - width/2, j * (width / (size-1))  - width/2, 0, 6,[1.0,0.0,0.0,1.0], false))
                 }
             }
         }

@@ -368,8 +368,8 @@ function checkDistance(x1, y1, x2, y2, line_size) {
 
 // Set size and expanse of cloth from webpage input
 function setCloth() {
-  var size = document.getElementById("size").value;
-  var expanse = Number(document.getElementById("nodes").value);
+  var size = Number(document.getElementById("nodes").value);
+  var expanse = Number(document.getElementById("size").value);
 
-  cloth = new Cloth(expanse, size);
+  cloth = new Cloth(size, expanse);
 }
