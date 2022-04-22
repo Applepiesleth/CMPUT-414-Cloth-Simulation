@@ -50,9 +50,9 @@ class Mass {
                     this.vel[1] + this.force[1] * delta / this.mass,
                     this.vel[2] + this.force[2] * delta / this.mass]
 
-        this.x = this.x + this.vel[0] * delta;
-        this.y = this.y + this.vel[1] * delta;
-        this.z = this.z + this.vel[2] * delta;
+        this.x = Math.min(1.5,Math.max(-1.5,this.x + this.vel[0] * delta));
+        this.y = Math.min(1.0,Math.max(-1.0,this.y + this.vel[1] * delta));
+        this.z = Math.min(1.0,Math.max(-1.0,this.z + this.vel[2] * delta));
         }
     }
 };
