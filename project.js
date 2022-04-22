@@ -35,6 +35,8 @@ var prev_x = 0; // For detecting change of mouse x.
 var prev_y = 0;
 var prev_glx = 0; // For detecting change of mouse x in gl space.
 var prev_gly = 0;
+var cutx1 = 0;//start point of cut
+var cuty1 = 0;
 
 var cloth;
 
@@ -65,7 +67,7 @@ function main() {
   gl.uniformMatrix4fv(u_MvpMatrix, false, viewMatrix.elements);
 
   // Specify the color for clearing <canvas>
-  gl.clearColor(0.0, 0.0, 0.0, 0.6);
+  gl.clearColor(0.05, 0.06, 0.07, 1.0);
 
   gl.enable(gl.DEPTH_TEST);
 
@@ -107,7 +109,8 @@ function main() {
       //click
       //console.log("click");
       dragStart = true;
-
+      cutx1 = glx;
+      cuty1 = gly;
     }
 
     //keep track of prev vals at end
@@ -143,8 +146,8 @@ function changeView(ev, viewMatrix, canvas) {
   switch(ev.keyCode){
     case 39: eye_x += 0.04; break;  // The right arrow key was pressed
     case 37: eye_x -= 0.04; break;  // The left arrow key was pressed
-    case 87: cloth.stretch(0,0.20,0,0.01); break; // W key pressed
-    case 83: cloth.stretch(0,0.20,0,-0.01); break; // S key pressed
+    case 87: cloth.stretch(0,0.20*cloth.expanse,0,0.01); break; // W key pressed
+    case 83: cloth.stretch(0,0.20*cloth.expanse,0,-0.01); break; // S key pressed
   }
   
 }

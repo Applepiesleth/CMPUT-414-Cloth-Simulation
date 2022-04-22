@@ -141,7 +141,7 @@ class Cloth {
             this.masses[i].resetForces();
         }
 
-        this.springs.forEach(spring => spring.applyForces());
+        this.springs.forEach(spring => spring.applyForces(this));
         this.masses.forEach(mass => mass.simulate(delta))
     }
 
@@ -161,6 +161,11 @@ class Cloth {
         mass.x = mass.x + dx*amount;
         mass.y = mass.y + dy*amount;
         mass.z = mass.z + dz*amount;
+    }
+
+    removeSpring(spring) {
+        this.springs.splice(this.springs.indexOf(spring),1);
+        this.springNum -= 1;
     }
 
     /*Tears along the given line t1 to t2*/

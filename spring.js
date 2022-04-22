@@ -28,7 +28,7 @@ class Spring {
     }
 
     /** Apply spring forces on connected masses */
-    applyForces() {
+    applyForces(cloth) {
         //TODO
         //Check for stationary, determines distribution of force to each endpoint
         var amt1 = 0.5;
@@ -70,7 +70,7 @@ class Spring {
 
 
         //Sum Forces
-        var ft = Math.max(fd + fk, 0.0);
+        var ft = fd +Math.max(fk, 0.0);
 
         //Apply acceleration to masses
         this.m1.force[0] += -ndx * ft * amt1;
@@ -80,8 +80,14 @@ class Spring {
         this.m2.force[1] += ndy * ft * amt2;
         this.m2.force[2] += ndz * ft * amt2;
 
-        if (ft > 1000) {
+        if (ft > 200) {
+            this.ks = Math.min(this.ks+4,5000);
             //mark tearing
+            //console.log("stretch tear");
+            //cloth.removeSpring(this);
+        }
+        else{
+            this.ks = Math.max(this.ks-2,2000);
         }
     }
 
@@ -98,7 +104,7 @@ class Spring {
 
         //t=q, self=p
         var rx = this.m2.x - this.m1.x;
-        var ry = this.m2.x - this.m1.x;
+        var ry = this.m2.y - this.m1.y;
         var sx = t2x - t1x;
         var sy = t2y - t1y;
 
