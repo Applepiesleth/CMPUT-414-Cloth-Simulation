@@ -74,8 +74,6 @@ function main() {
 
   cloth.draw();
 
-  document.onkeydown = function(ev){changeView(ev, viewMatrix, canvas); };
-
   var dragStart = false;
   function onMouseEvent(ev){
     var rect = canvas.getBoundingClientRect();
@@ -115,6 +113,8 @@ function main() {
     cloth.draw();
     //console.log("refresh");
 
+    document.onkeydown = function(ev){setStretch(ev); };
+
     if(dragStart) {
       var vertices = new Float32Array([cutx1, cuty1, 0, glx, gly, 0]);
       var sizes = new Float32Array([1.0,1.0]);
@@ -135,8 +135,8 @@ function main() {
   
 }
 
-// Allows for changing of view using arrow keys
-function changeView(ev, viewMatrix, canvas) {
+// Change how much to stretch the cloth 
+function setStretch(ev) {
   switch(ev.keyCode){
     case 87: cloth.stretch(0,0.20*cloth.expanse,0,0.01); break; // W key pressed
     case 83: cloth.stretch(0,0.20*cloth.expanse,0,-0.01); break; // S key pressed
