@@ -20,22 +20,9 @@ void main () {
 }
 `;
 
-const mode = 1;
-
-const red = [1.0, 0.0, 0.0, 1.0];
-const green = [0.0, 1.0, 0.0, 1.0];
-const purple = [1.0, 0.0, 1.0, 1.0];
-const blue = [0.0, 0.0, 1.0, 1.0];
-const cyan = [0.0, 1.0, 1.0, 1.0];
-const yellow = [1.0, 1.0, 0.0, 1.0]
-
-var prev_x = 0; // For detecting change of mouse x.
-var prev_y = 0;
-var glx;
+var glx; //current mouse position in GL coordinates
 var gly;
-var prev_glx = 0; // For detecting change of mouse x in gl space.
-var prev_gly = 0;
-var cutx1 = 0;//start point of cut
+var cutx1 = 0; //start point of cut
 var cuty1 = 0;
 
 var cloth;

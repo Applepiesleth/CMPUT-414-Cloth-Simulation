@@ -131,6 +131,7 @@ class Spring {
         var u = uNum / denom;
         var t = this.cross(t1x - this.m1.x, t1y - this.m1.y, sx, sy) / denom;
 
+        // To remove a spring, the connected masses are set to be the same mass
         if ((t >= 0) && (t <= 1) && (u >= 0) && (u <= 1)) {
             this.m2 = this.m1;
         }

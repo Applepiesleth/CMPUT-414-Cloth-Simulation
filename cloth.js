@@ -175,13 +175,18 @@ class Cloth {
     }
 
 
-
+    /**
+     * Remakes cloth from the vertices obtained from an image
+     * @param {Array} vertices Array of coordinates to be placed
+     * @param {Number} width Width of image cloth 
+     */
     loadPoints(vertices, width) {
         this.pointNum = vertices.length;
         
         this.masses = [];
         this.springs = [];
         
+        // a mass is added for each vertex found from the image
         var ratio = 1.0 * this.expanse / width / 2;
         vertices.forEach(vertex => this.masses.push(new Mass(vertex[1] * ratio - (this.expanse / 4), vertex[0] * ratio - (this.expanse / 4), 0, 6,[1.0,0.0,0.0,1.0], false)))
         
@@ -189,6 +194,7 @@ class Cloth {
         var topLeft = 0
         var topRight = 0
         for (let i = 0; i < this.pointNum; i++) { 
+            // The top-left most and top-right most nodes are determined based of x^3 + y^3 distance from center
             if (Math.pow(this.masses[i].x * -1, 3) + Math.pow(this.masses[i].y, 3) > Math.pow(this.masses[topLeft].x * -1, 3) + Math.pow(this.masses[topLeft].y, 3)) {
                 topLeft = i;
             }
@@ -201,9 +207,11 @@ class Cloth {
         this.masses[topRight].stationary = true;
         this.masses[topRight].c = [1.0,1.0,0.0,1.0];
 
-        // Connect masses to nearby points
+        // Connect masses to nearby masses
         for (let i = 0; i < this.pointNum; i++) {
+            // Masses are connected to other masses until it has at least 4 connections
             while(this.masses[i].connections.length < 4) {
+                // the closest node that hasn't already been connected to is found
                 var closest = 0;
                 var lowestDist = Number.MAX_VALUE;
                 for (let j = 0; j < this.pointNum; j++) {
