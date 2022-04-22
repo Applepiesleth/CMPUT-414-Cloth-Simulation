@@ -177,21 +177,13 @@ class Cloth {
 
 
     loadPoints(vertices, width) {
-        this.size = Math.floor(Math.sqrt(vertices.length));
-        this.pointNum = this.size * this.size;
+        this.pointNum = vertices.length;
         
         this.masses = [];
         this.springs = [];
         
-        
         var ratio = 1.0 * this.expanse / width / 2;
-        var k = 0;
-        for (let i = 0; i < this.size; i++) {
-            for (let j = 0; j < this.size; j++) {
-                this.masses.push(new Mass(vertices[k][1] * ratio - (this.expanse / 4), vertices[k][0] * ratio - (this.expanse / 4), 0, 6,[1.0,0.0,0.0,1.0], false))
-                k = k + 1;
-            }
-        }
+        vertices.forEach(vertex => this.masses.push(new Mass(vertex[1] * ratio - (this.expanse / 4), vertex[0] * ratio - (this.expanse / 4), 0, 6,[1.0,0.0,0.0,1.0], false)))
         
         // Determine Stationary points
         var topLeft = 0

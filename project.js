@@ -155,7 +155,6 @@ function changeView(ev, viewMatrix, canvas) {
 // Once an image has been uploaded, move the masses of the current cloth
 // to correspond to the weave's vertice locations. 
 function updateClothCoordinates(vertices, width) {
-  console.log(vertices);
   // update cloth in here
   cloth.loadPoints(vertices, width);
 }
