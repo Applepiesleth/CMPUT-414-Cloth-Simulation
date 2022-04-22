@@ -1,38 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>CMPUT 414 Project</title>
-  </head>
 
-  <body onload="main()">
-    <h1>Softbody Cloth Simulation</h1>
-    <h3>CMPUT 414 - Team 7 - Eye of Sauron</h3>
-    An implementation of a Spring-Mass Cloth Softbody model, with tearing and cloth pattern generation from bitmap images.<br/> 
-    Use W and S to move the stationary points closer and farther apart.
-    <br/><br/>
+<head>
+  <meta charset="utf-8" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Akshar&display=swap');
 
-    Set Size: <input type="number" id="size" value="1"/>
-    Set Node Dimensions: <input type="number" id="nodes" value="15"/>
-    <input type="submit" value="Set" onclick="setCloth()"/><br/><br/>
-    <canvas id="webgl" width="800" height="800">
-    Please use a browser that supports "canvas"
-    </canvas>
-    <br/><br/>
-    Insert Custom Cloth Pattern: 
-    <input type="file" id="patternUpload" accept=".jpg, .jpeg, .png"></input>
-    <br/><canvas id="imageCanvas" width="100" height="100">
-      Please use a browser that supports "canvas"
-    </canvas>
-    <script src="lib/webgl-utils.js"></script>
-    <script src="lib/webgl-debug.js"></script>
-    <script src="lib/cuon-utils.js"></script>
-    <script src="lib/webgl-utils.js"></script>
-    <script src="lib/init.js"></script>
-    <script src="lib/cuon-matrix.js"></script>
-    <script src="cloth.js"></script> 
-    <script src="spring.js"></script> 
-    <script src="mass.js"></script> 
-    <script src="project.js"></script>
-  </body>
+    body {
+      font-family: 'Akshar', sans-serif;
+    }
+  </style>
+
+  <title>CMPUT 414 Project</title>
+</head>
+
+<body onload="main()" style="background-color: #0e0e0e">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+  <div class="container bg-dark text-light">
+    <div class="container text-white-50">
+      <h1 class="text-info">Softbody Cloth Simulation</h1>
+      <h3 class="text-light">CMPUT 414 - Team 7 - Eye of Sauron</h3>
+      <p>An implementation of a Spring-Mass Cloth Softbody model, with tearing and cloth pattern generation from bitmap
+        images.<br />
+        Use W and S to move the stationary points closer and farther apart.</p>
+    </div>
+
+
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <div class="col">Set Size:<input type="number" id="size" value="1" /></div>
+            <div class="col">Set Node Dimensions: <input type="number" id="nodes" value="15" /></div>
+            <div class="col"><br /><input type="submit" value="Set" onclick="setCloth()" /></div>
+          </div>
+        </div>
+        <div class="col">
+          Insert Custom Cloth Pattern:<br />
+          <input type="file" id="patternUpload" accept=".jpg, .jpeg, .png"></input>
+        </div>
+      </div>
+    </div>
+
+    <div class="container p-2">
+      <canvas id="webgl" width="800" height="800">
+        Please use a browser that supports "canvas"
+      </canvas>
+      <canvas id="imageCanvas" width="100px" height="100px">
+        Please use a browser that supports "canvas"
+      </canvas>
+    </div>
+  </div>
+  <br />
+  <script src="lib/webgl-utils.js"></script>
+  <script src="lib/webgl-debug.js"></script>
+  <script src="lib/cuon-utils.js"></script>
+  <script src="lib/webgl-utils.js"></script>
+  <script src="lib/init.js"></script>
+  <script src="lib/cuon-matrix.js"></script>
+  <script src="cloth.js"></script>
+  <script src="spring.js"></script>
+  <script src="mass.js"></script>
+  <script src="project.js"></script>
+</body>
+
 </html>

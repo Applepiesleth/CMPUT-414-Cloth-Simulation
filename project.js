@@ -65,7 +65,7 @@ function main() {
   gl.uniformMatrix4fv(u_MvpMatrix, false, viewMatrix.elements);
 
   // Specify the color for clearing <canvas>
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.clearColor(0.0, 0.0, 0.0, 0.6);
 
   gl.enable(gl.DEPTH_TEST);
 
