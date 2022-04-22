@@ -5,7 +5,16 @@ Natalie Iwaniuk, Jamie Powers, Ronan Sandoval
 =============================================
 
 Included Files:
+- lib : A library of useful webGL functions from kanda and matsuda and Google
+- testimages : folder of images that can be used for cloth generation, obtained from Wei Guo
+    http://www.icj-e.org/download/ICJE-7-4-38-44.pdf 
+- index.html : HTML file to run the render
+- project.js : Main JS file with WebGL boilerplate and implementation of cloth generation
+- cloth.js : Implementation of cloth object
+- mass.js : Implementation of mass object
+- spring.js : Implementation of spring object
 
 How to Run:
+- Run `index.html` to open a webpage with the cloth render and a user interface.
 
 Notes:
