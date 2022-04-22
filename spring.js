@@ -99,6 +99,7 @@ class Spring {
 
     /*
     Checks whether the given line segment intersect the spring for purposes of tearing
+    Adapted from https://github.com/pgkelley4/line-segments-intersect/blob/master/js/line-segments-intersect.js
     */
     checkTearLine(t1x, t1y, t2x, t2y) {
         //console.log("try tear: ",this.m1.x,",",this.m1.y," - ",this.m2.x,",",this.m2.y," vs ",t1x,",",t1y," - ", t2x,",",t2y);
