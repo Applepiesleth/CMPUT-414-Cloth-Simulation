@@ -29,7 +29,11 @@ class Spring {
 
     /** Apply spring forces on connected masses */
     applyForces(cloth) {
-        //TODO
+        //Check that the spring hasn't been severed
+        if (this.m1 == this.m2){
+            return;
+        }
+
         //Check for stationary, determines distribution of force to each endpoint
         var amt1 = 0.5;
         var amt2 = 0.5;
