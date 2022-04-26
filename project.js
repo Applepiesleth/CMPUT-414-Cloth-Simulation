@@ -209,10 +209,10 @@ function takeInputImage(inputImage) {
       var r = img[idx];
       var g = img[idx+1];
       var b = img[idx+2];
-      // Uses a weighted average to convert the pixel to grayscale based on human 
-      // luminance vision. Formula from https://en.wikipedia.org/wiki/Grayscale
-      // Divides by 255 to get a value between 0 and 1. 
-      var avg = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+      // Takes the average of the three colour channels
+      // in case they are different, then 
+      // divides by 255 to get a value between 0 and 1. 
+      var avg = ((r + g + b)/3) / 255;
       // Threshold the grayscale pixel to 0 or 1.
       var val = 1;
       if (avg < 0.5)  val = 0;
