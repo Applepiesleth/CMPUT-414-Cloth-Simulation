@@ -1,3 +1,6 @@
+/**
+ * Mass element of a Mass-Spring model
+ */
 class Mass {
 
     /**
@@ -21,12 +24,8 @@ class Mass {
         this.force = [0, 0, 0];
         this.mass = 0.5;
 
+        // Mass indices connected to this mass; used for generating a weave pattern
         this.connections = [];
-
-        this.a_Position = gl.getAttribLocation(gl.program, "a_Position");
-        this.a_Color = gl.getAttribLocation(gl.program, "a_Color");
-        this.a_PointSize = gl.getAttribLocation(gl.program, "a_PointSize");
-        this.u_MvpMatrix = gl.getUniformLocation(gl.program,"u_MvpMatrix");
 
     }
 

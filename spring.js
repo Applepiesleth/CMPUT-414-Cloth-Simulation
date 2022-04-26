@@ -1,3 +1,6 @@
+/**
+ * Spring element of a Mass-Spring Model
+ */
 class Spring {
 
     /**
@@ -14,11 +17,6 @@ class Spring {
         this.l0 = Math.sqrt((m1.x - m2.x) * (m1.x - m2.x) + (m1.y - m2.y) * (m1.y - m2.y) + (m1.z - m2.z) * (m1.z - m2.z));
         this.ks = 3000.0;
         this.kd = 7.5;
-
-        this.a_Position = gl.getAttribLocation(gl.program, "a_Position");
-        this.a_Color = gl.getAttribLocation(gl.program, "a_Color");
-        this.a_PointSize = gl.getAttribLocation(gl.program, "a_PointSize");
-        this.u_MvpMatrix = gl.getUniformLocation(gl.program, "u_MvpMatrix");
 
     }
 
@@ -103,7 +101,7 @@ class Spring {
 
     /*
     Checks whether the given line segment intersect the spring for purposes of tearing
-    Adapted from https://github.com/pgkelley4/line-segments-intersect/blob/master/js/line-segments-intersect.js
+    Adapted from https://github.com/pgkelley4/line-segments-intersect/blob/master/js/line-segments-intersect.js (Peter Kelley, 2016)
     */
     checkTearLine(t1x, t1y, t2x, t2y) {
         //console.log("try tear: ",this.m1.x,",",this.m1.y," - ",this.m2.x,",",this.m2.y," vs ",t1x,",",t1y," - ", t2x,",",t2y);

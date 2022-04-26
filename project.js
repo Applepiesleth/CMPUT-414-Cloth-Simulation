@@ -1,3 +1,7 @@
+/**
+ * Main Javascript program, with image processing implementation.
+ */
+
 // Vertex shader program
 var VSHADER_SOURCE = `
   attribute vec4 a_Position; // attribute variable
@@ -54,14 +58,17 @@ function main() {
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.clear(gl.DEPTH_BUFFER_BIT);
 
+  // Constructing initial cloth
   cloth = new Cloth(15, 1);
+  cloth.draw();
 
+  // Defining function for uploading weave pattern images
   var fileReader = document.getElementById('patternUpload');
   fileReader.addEventListener('change', processImageUpload);
 
-  cloth.draw();
-
   var dragStart = false;
+
+  // Function for tearing cloth using the mouse
   function onMouseEvent(ev){
     var rect = canvas.getBoundingClientRect();
     var x = ev.clientX - rect.left;
@@ -83,10 +90,12 @@ function main() {
     }
   }
 
+  // Defining functions for mouse movement and actions
   canvas.addEventListener('mousedown', onMouseEvent, false);
   canvas.addEventListener('mousemove', onMouseEvent, false);
   canvas.addEventListener('mouseup', onMouseEvent, false);
 
+  // Obtaining WebGL shader attribute variables
   var a_Position = gl.getAttribLocation(gl.program, "a_Position");
   var a_Color = gl.getAttribLocation(gl.program, "a_Color");
   var a_PointSize = gl.getAttribLocation(gl.program, "a_PointSize");
@@ -103,6 +112,7 @@ function main() {
     document.onkeydown = function(ev){setStretch(ev); };
 
     if(dragStart) {
+      // Rendering cut line on canvas
       var vertices = new Float32Array([cutx1, cuty1, 0, glx, gly, 0]);
       var sizes = new Float32Array([1.0,1.0]);
       var colors = new Float32Array([0.0,1.0,1.0,1.0,0.0,1.0,1.0,1.0]);

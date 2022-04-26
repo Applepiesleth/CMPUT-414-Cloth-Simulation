@@ -1,7 +1,11 @@
+/**
+ * A mass-spring softbody cloth model
+ */
+
 class Cloth {
 
     /**
-     * A mass=spring cloth model
+     * A mass-spring cloth model
      * @param {Number} size Number of nodes in the cloth
      * @param {Number} expanse How large the cloth is on the canvas
      */
@@ -48,6 +52,7 @@ class Cloth {
 
         this.springNum = this.springs.length;
 
+        // Obtaining WebGL shader attribute variables
         this.a_Position = gl.getAttribLocation(gl.program, "a_Position");
         this.a_Color = gl.getAttribLocation(gl.program, "a_Color");
         this.a_PointSize = gl.getAttribLocation(gl.program, "a_PointSize");
@@ -163,6 +168,10 @@ class Cloth {
         mass.z = mass.z + dz*amount;
     }
 
+    /**
+     * Removes a spring from the cloth [unsused]
+     * @param {Spring} spring spring to remove 
+     */
     removeSpring(spring) {
         this.springs.splice(this.springs.indexOf(spring),1);
         this.springNum -= 1;
