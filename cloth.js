@@ -141,11 +141,7 @@ class Cloth {
      *  @param {Number} delta Change in time
      */
     simulate(delta) {
-
-        for (let i = 0; i < this.pointNum; i++) {
-            this.masses[i].resetForces();
-        }
-
+        this.masses.forEach(mass => mass.resetForces());
         this.springs.forEach(spring => spring.applyForces(this));
         this.masses.forEach(mass => mass.simulate(delta))
     }
